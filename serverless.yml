@@ -1,0 +1,75 @@
+org: fernando
+app: serverlessjams
+service: serverlessjams-dev2020
+
+frameworkVersion: ">=1.53.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python3.7
+  region: us-east-1
+  environment:
+    DYNAMODB_TABLE: serverlessjams-dev2020
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+      Resource: "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+    - Effect: Allow
+      Action:
+        - sns:Publish
+      Resource: "*"
+functions:
+  generateVerificationCode:
+    handler: backend/generate_code.handler
+    events:
+      - http:
+          path: send-code
+          method: post
+          cors: true
+  recordSongVote:
+    handler: backend/record_song_vote.handler
+    events:
+      - http:
+          path: song/vote
+          method: post
+          cors: true
+  getSongVoteCounts:
+    handler: backend/get_song_vote_counts.handler
+    events:
+      - http:
+          path: votes
+          method: get
+          cors: true
+
+resources:
+  Resources:
+    usersTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+
+plugins:
+  - serverless-python-requirements
+
+package:
+  exclude:
+    - node_modules/**
+    - frontend/**
+    - package-lock.json
