@@ -7,7 +7,7 @@ $(document).ready(function(){
   document.getElementsByClassName("ui purple button")[0].addEventListener("click", generateCode);
 });
 
-var endpoint_url_root = "https://bui2w4w90d.execute-api.us-east-1.amazonaws.com/dev"
+var endpoint_url_root = "https://REPLACE_ME.execute-api.us-east-1.amazonaws.com/dev"
 var vote_endpoint = endpoint_url_root + "/song/vote"
 var get_votes_endpoint = endpoint_url_root + "/votes"
 var generate_code_endpoint = endpoint_url_root + "/send-code"
