@@ -23,22 +23,22 @@ provider:
         - sns:Publish
       Resource: "*"
 functions:
-  generateVerificationCode:
+  generateCode:
     handler: backend/generate_code.handler
     events:
       - http:
           path: send-code
           method: post
           cors: true
-  recordSongVote:
-    handler: backend/record_song_vote.handler
+  vote:
+    handler: backend/vote.handler
     events:
       - http:
           path: song/vote
           method: post
           cors: true
-  getSongVoteCounts:
-    handler: backend/get_song_vote_counts.handler
+  getVotes:
+    handler: backend/get_votes.handler
     events:
       - http:
           path: votes
