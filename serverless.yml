@@ -1,6 +1,6 @@
-org: fernandosdemos
-app: serverlessjams-devweek2020
-service: serverlessjams-devweek2020
+org: devweek2020
+app: sls-jams
+service: serverlessjams
 
 frameworkVersion: ">=1.53.0 <2.0.0"
 
@@ -68,3 +68,4 @@ resources:
 package:
   exclude:
     - frontend/**
+    - README.md
