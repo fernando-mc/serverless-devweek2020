@@ -1,6 +1,6 @@
-org: fernando
-app: serverlessjams
-service: serverlessjams-dev2020
+org: fernandosdemos
+app: serverlessjams-devweek2020
+service: serverlessjams-devweek2020
 
 frameworkVersion: ">=1.53.0 <2.0.0"
 
@@ -9,7 +9,7 @@ provider:
   runtime: python3.7
   region: us-east-1
   environment:
-    DYNAMODB_TABLE: serverlessjams-dev2020
+    DYNAMODB_TABLE: ${self:service}-${opt:stage, self:provider.stage}
   iamRoleStatements:
     - Effect: Allow
       Action:
