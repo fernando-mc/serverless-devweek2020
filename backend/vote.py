@@ -11,6 +11,7 @@ table = ddb_r.Table(os.environ['DYNAMODB_TABLE'])
 
 
 def handler(event, context):
+    now = int(time.time()))
     body = json.loads(event['body'])
     unverified_code = body['verificationCode']
     phone_number = body['phoneNumber']
@@ -23,11 +24,17 @@ def handler(event, context):
     if result == []:
         return generate_status_response("We can't find a verification code, did you enter your phone number?")
     if result:
-        has_voted = result[0]['hasVoted']
-        verification_code = result[0]['verificationCode']
-        code_age_seconds = int(time.time()) - int(result[0]['updatedTime'])
+        phone_data = result[0]
+        has_voted = phone_data['hasVoted']
+        verification_code = phone_data['verificationCode']
+        code_age_seconds = now - int(phone_data['updatedTime'])
     if has_voted:
-        return generate_status_response("It looks like this number has already voted!")
+        last_voted_time = phone_data["lastVotedTime"]
+        time_since_last_vote = now - last_voted_time
+        # If the last vote was less than 5 min then block the vote
+        if time_since_last_vote < 60 * 5:
+            remaining_time = str(300 - time_since_last_vote)
+            return generate_status_response("Looks like you've already voted recently! Please wait another " + remaining_time + " seconds")
     if verification_code != unverified_code:
         return generate_status_response("The code you entered is not correct.")
     if code_age_seconds > (60 * 5):
@@ -45,15 +52,16 @@ def handler(event, context):
         },
         ReturnValues="UPDATED_NEW"
     )
-    # After vote is recorded, update has_voted to true
+    # After vote is recorded, update has_voted to true and update the lastVotedTime
     table.update_item(
         Key={
             'pk': phone_pk,
             'sk': phone_sk
         },
-        UpdateExpression='SET hasVoted = :hasvotedtrue',
+        UpdateExpression='SET hasVoted = :hasvotedtrue, lastVotedTime=:lastVotedTime',
         ExpressionAttributeValues={
-            ':hasvotedtrue': True
+            ':hasvotedtrue': True,
+            ':lastVotedTime': str(int(time.time())),
         }
     )
     # Return the successful response with the new vote count
