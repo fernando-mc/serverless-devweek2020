@@ -42,8 +42,8 @@ def handler(event, context):
             set_or_reset_code(phone_number)
             return create_response("Code reset!")
         else:
-            wait_duration = (300 - seconds_since_last_vote)
-            return create_response("Please wait " + wait_duration + " seconds to vote again.")
+            wait_duration = str(300 - seconds_since_last_vote)
+            return create_response("Please wait " + wait_duration + " seconds to generate a new code to vote again.")
     # Otherwise, do nothing
     return create_response("Your code is already used!")
 
