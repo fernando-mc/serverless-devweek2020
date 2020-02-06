@@ -71,7 +71,8 @@ async function voteForSong() {
     const result_json = await response.json()
     if (result_json.hasOwnProperty("votes")){
       setVotes(songName, result_json["votes"])
-    } else if (result_json.hasOwnProperty("status")){
+    } 
+    if (result_json.hasOwnProperty("status")){
       document.getElementById("sentDialog").innerHTML = result_json["status"]
     }
   }
