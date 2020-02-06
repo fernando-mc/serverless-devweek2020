@@ -11,7 +11,7 @@ table = ddb_r.Table(os.environ['DYNAMODB_TABLE'])
 
 
 def handler(event, context):
-    now = int(time.time()))
+    now = int(time.time())
     body = json.loads(event['body'])
     unverified_code = body['verificationCode']
     phone_number = body['phoneNumber']
@@ -30,7 +30,7 @@ def handler(event, context):
         code_age_seconds = now - int(phone_data['updatedTime'])
     if has_voted:
         last_voted_time = phone_data["lastVotedTime"]
-        time_since_last_vote = now - last_voted_time
+        time_since_last_vote = now - int(last_voted_time)
         # If the last vote was less than 5 min then block the vote
         if time_since_last_vote < 60 * 5:
             remaining_time = str(300 - time_since_last_vote)
