@@ -68,6 +68,7 @@ resources:
 package:
   exclude:
     - frontend/**
+    - node_modules/**
     - README.md
 
 plugins:
