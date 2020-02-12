@@ -69,3 +69,11 @@ package:
   exclude:
     - frontend/**
     - README.md
+
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: devweek2020-sls-frontend
+    distributionFolder: frontend
